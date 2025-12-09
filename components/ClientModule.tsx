@@ -16,7 +16,7 @@ const ClientModule: React.FC = () => {
     industry: '',
     serviceType: 'General Audit',
     fiscalYear: '2023',
-    partnerInCharge: 'Hendra Gunawan, CPA',
+    partnerInCharge: 'Hendra Gunawan, SE, Ak., CPA, CA',
     deadline: '',
     status: EngagementStatus.PLANNING
   });
@@ -36,7 +36,7 @@ const ClientModule: React.FC = () => {
     });
 
     setIsModalOpen(false);
-    setFormData({ clientName: '', industry: '', serviceType: 'General Audit', fiscalYear: '2023', partnerInCharge: 'Hendra Gunawan, CPA', deadline: '', status: EngagementStatus.PLANNING });
+    setFormData({ clientName: '', industry: '', serviceType: 'General Audit', fiscalYear: '2023', partnerInCharge: 'Hendra Gunawan, SE, Ak., CPA, CA', deadline: '', status: EngagementStatus.PLANNING });
   };
 
   const getStatusColor = (status: EngagementStatus) => {
@@ -224,9 +224,9 @@ const ClientModule: React.FC = () => {
                 value={formData.partnerInCharge}
                 onChange={(e) => setFormData({...formData, partnerInCharge: e.target.value})}
               >
-                <option value="Hendra Gunawan, CPA">Hendra Gunawan, CPA</option>
-                <option value="Siti Rahma, CPA">Siti Rahma, CPA</option>
-                <option value="Budi Santoso, CPA">Budi Santoso, CPA</option>
+                <option value="Hendra Gunawan, SE, Ak., CPA, CA">Hendra Gunawan, SE, Ak., CPA, CA</option>
+                <option value="Siti Rahmawati, SE, M.Ak, CPA">Siti Rahmawati, SE, M.Ak, CPA</option>
+                <option value="Budi Santoso, SE, CPA">Budi Santoso, SE, CPA</option>
               </select>
             </div>
              <div className="space-y-2">

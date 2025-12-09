@@ -4,30 +4,31 @@ export const APP_NAME = "AuditCore ERP";
 
 // Mock Clients (CRM) - Realistically diverse portfolio
 export const MOCK_ENGAGEMENTS: ClientEngagement[] = [
-  { id: 'ENG-2024-001', clientName: 'PT Mega Konstruksi Tbk', industry: 'Construction & Real Estate', serviceType: 'General Audit', fiscalYear: '2023', status: EngagementStatus.FIELDWORK, partnerInCharge: 'Hendra Gunawan, CPA', deadline: '2024-03-31' },
-  { id: 'ENG-2024-002', clientName: 'CV Sumber Makmur Sejahtera', industry: 'Retail & Distribution', serviceType: 'Tax Compliance', fiscalYear: '2023', status: EngagementStatus.PLANNING, partnerInCharge: 'Siti Rahma, CPA', deadline: '2024-04-30' },
-  { id: 'ENG-2024-003', clientName: 'Global Tech Solutions Indonesia', industry: 'Technology', serviceType: 'Internal Control Review', fiscalYear: '2023', status: EngagementStatus.REVIEW, partnerInCharge: 'Hendra Gunawan, CPA', deadline: '2024-02-15' },
-  { id: 'ENG-2024-004', clientName: 'Yayasan Harapan Bangsa', industry: 'Non-Profit', serviceType: 'General Audit', fiscalYear: '2023', status: EngagementStatus.FINALIZED, partnerInCharge: 'Budi Santoso, CPA', deadline: '2024-01-31' },
-  { id: 'ENG-2024-005', clientName: 'PT Bank Finansial Asia', industry: 'Banking', serviceType: 'IT Audit Advisory', fiscalYear: '2023', status: EngagementStatus.FIELDWORK, partnerInCharge: 'Siti Rahma, CPA', deadline: '2024-03-15' },
+  { id: 'ENG-2024-001', clientName: 'PT Mega Konstruksi Tbk', industry: 'Construction & Real Estate', serviceType: 'General Audit', fiscalYear: '2023', status: EngagementStatus.FIELDWORK, partnerInCharge: 'Hendra Gunawan, SE, Ak., CPA, CA', deadline: '2024-03-31' },
+  { id: 'ENG-2024-002', clientName: 'CV Sumber Makmur Sejahtera', industry: 'Retail & Distribution', serviceType: 'Tax Compliance', fiscalYear: '2023', status: EngagementStatus.PLANNING, partnerInCharge: 'Siti Rahmawati, SE, M.Ak, CPA', deadline: '2024-04-30' },
+  { id: 'ENG-2024-003', clientName: 'Global Tech Solutions Indonesia', industry: 'Technology', serviceType: 'Internal Control Review', fiscalYear: '2023', status: EngagementStatus.REVIEW, partnerInCharge: 'Hendra Gunawan, SE, Ak., CPA, CA', deadline: '2024-02-15' },
+  { id: 'ENG-2024-004', clientName: 'Yayasan Harapan Bangsa', industry: 'Non-Profit', serviceType: 'General Audit', fiscalYear: '2023', status: EngagementStatus.FINALIZED, partnerInCharge: 'Budi Santoso, SE, CPA', deadline: '2024-01-31' },
+  { id: 'ENG-2024-005', clientName: 'PT Bank Finansial Asia', industry: 'Banking', serviceType: 'IT Audit Advisory', fiscalYear: '2023', status: EngagementStatus.FIELDWORK, partnerInCharge: 'Siti Rahmawati, SE, M.Ak, CPA', deadline: '2024-03-15' },
 ];
 
 // Mock Tasks/WIP (WIP Management) - Realistic Audit Procedures & Hours
 export const MOCK_TASKS: AuditTask[] = [
-  { id: 'TSK-101', taskName: 'Cash Opname & Bank Confirmation', category: 'Assets', budgetedHours: 32, actualHours: 28, assignedTo: 'Andi Saputra', status: TaskStatus.REVIEWED, dueDate: '2024-02-01' },
-  { id: 'TSK-102', taskName: 'Revenue Cut-off Testing', category: 'Revenue', budgetedHours: 65, actualHours: 45, assignedTo: 'Dewi Lestari', status: TaskStatus.IN_PROGRESS, dueDate: '2024-02-20' },
+  { id: 'TSK-101', taskName: 'Cash Opname & Bank Confirmation', category: 'Assets', budgetedHours: 32, actualHours: 28, assignedTo: 'Andi Saputra, SE', status: TaskStatus.REVIEWED, dueDate: '2024-02-01' },
+  { id: 'TSK-102', taskName: 'Revenue Cut-off Testing', category: 'Revenue', budgetedHours: 65, actualHours: 45, assignedTo: 'Michael Tan, SE, CPA', status: TaskStatus.IN_PROGRESS, dueDate: '2024-02-20' },
   { id: 'TSK-103', taskName: 'Inventory Stock Count (Site A)', category: 'Assets', budgetedHours: 120, actualHours: 128, assignedTo: 'Team Alpha', status: TaskStatus.COMPLETED, dueDate: '2024-01-15' },
-  { id: 'TSK-104', taskName: 'Payroll Test of Controls', category: 'Expenses', budgetedHours: 40, actualHours: 5, assignedTo: 'Rudi Hartono', status: TaskStatus.NOT_STARTED, dueDate: '2024-03-01' },
-  { id: 'TSK-105', taskName: 'CIT (PPh 29) Reconciliation', category: 'Tax', budgetedHours: 55, actualHours: 50, assignedTo: 'Dewi Lestari', status: TaskStatus.IN_PROGRESS, dueDate: '2024-02-28' },
-  { id: 'TSK-106', taskName: 'Fixed Asset Physical Inspection', category: 'Assets', budgetedHours: 48, actualHours: 0, assignedTo: 'Andi Saputra', status: TaskStatus.NOT_STARTED, dueDate: '2024-02-25' },
+  { id: 'TSK-104', taskName: 'Payroll Test of Controls', category: 'Expenses', budgetedHours: 40, actualHours: 5, assignedTo: 'Rudi Hermawan', status: TaskStatus.NOT_STARTED, dueDate: '2024-03-01' },
+  { id: 'TSK-105', taskName: 'CIT (PPh 29) Reconciliation', category: 'Tax', budgetedHours: 55, actualHours: 50, assignedTo: 'Clarissa Putri, S.Ak', status: TaskStatus.IN_PROGRESS, dueDate: '2024-02-28' },
+  { id: 'TSK-106', taskName: 'Fixed Asset Physical Inspection', category: 'Assets', budgetedHours: 48, actualHours: 0, assignedTo: 'Andi Saputra, SE', status: TaskStatus.NOT_STARTED, dueDate: '2024-02-25' },
 ];
 
 // Mock Staff (HCM)
 export const MOCK_STAFF: Staff[] = [
-  { id: 'S-001', name: 'Hendra Gunawan, CPA', role: 'Audit Partner', specialization: 'Construction & Mining', email: 'hendra@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Supervising Multiple', avatarUrl: 'https://ui-avatars.com/api/?name=Hendra+Gunawan&background=0D8ABC&color=fff' },
-  { id: 'S-002', name: 'Siti Rahma, CPA', role: 'Audit Manager', specialization: 'Banking & Finserv', email: 'siti@auditcore.id', status: StaffStatus.ON_SITE, currentEngagement: 'PT Bank Finansial Asia', avatarUrl: 'https://ui-avatars.com/api/?name=Siti+Rahma&background=random' },
-  { id: 'S-003', name: 'Andi Saputra', role: 'Senior Auditor', specialization: 'Manufacturing', email: 'andi@auditcore.id', status: StaffStatus.ON_SITE, currentEngagement: 'PT Mega Konstruksi', avatarUrl: 'https://ui-avatars.com/api/?name=Andi+Saputra&background=random' },
-  { id: 'S-004', name: 'Dewi Lestari', role: 'Junior Auditor', specialization: 'Taxation', email: 'dewi@auditcore.id', status: StaffStatus.TRAINING, currentEngagement: 'In-House Training', avatarUrl: 'https://ui-avatars.com/api/?name=Dewi+Lestari&background=random' },
-  { id: 'S-005', name: 'Budi Santoso, CPA', role: 'Quality Control Partner', specialization: 'Compliance', email: 'budi@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Final Review', avatarUrl: 'https://ui-avatars.com/api/?name=Budi+Santoso&background=random' },
+  { id: 'S-001', name: 'Hendra Gunawan, SE, Ak., CPA, CA', role: 'Managing Partner', specialization: 'Construction & Mining', email: 'hendra@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Supervising Multiple', avatarUrl: 'https://ui-avatars.com/api/?name=Hendra+Gunawan&background=0D8ABC&color=fff' },
+  { id: 'S-002', name: 'Siti Rahmawati, SE, M.Ak, CPA', role: 'Audit Partner', specialization: 'Banking & Finserv', email: 'siti@auditcore.id', status: StaffStatus.ON_SITE, currentEngagement: 'PT Bank Finansial Asia', avatarUrl: 'https://ui-avatars.com/api/?name=Siti+Rahmawati&background=random' },
+  { id: 'S-003', name: 'Michael Tan, SE, CPA', role: 'Senior Manager', specialization: 'Technology & Startups', email: 'michael.tan@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Global Tech Solutions', avatarUrl: 'https://ui-avatars.com/api/?name=Michael+Tan&background=random' },
+  { id: 'S-004', name: 'Andi Saputra, SE', role: 'Senior Auditor', specialization: 'Manufacturing', email: 'andi@auditcore.id', status: StaffStatus.ON_SITE, currentEngagement: 'PT Mega Konstruksi', avatarUrl: 'https://ui-avatars.com/api/?name=Andi+Saputra&background=random' },
+  { id: 'S-005', name: 'Clarissa Putri, S.Ak', role: 'Junior Auditor', specialization: 'Taxation', email: 'clarissa@auditcore.id', status: StaffStatus.TRAINING, currentEngagement: 'Brevet A/B Training', avatarUrl: 'https://ui-avatars.com/api/?name=Clarissa+Putri&background=random' },
+  { id: 'S-006', name: 'Budi Santoso, SE, CPA', role: 'Advisory Partner', specialization: 'Compliance & GRC', email: 'budi@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Final Review', avatarUrl: 'https://ui-avatars.com/api/?name=Budi+Santoso&background=random' },
 ];
 
 // Mock Financials - Realistic Amounts for Mid-Tier Firm
