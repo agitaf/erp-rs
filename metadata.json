@@ -1,0 +1,5 @@
+{
+  "name": "MediCore ERP",
+  "description": "A comprehensive Hospital ERP system integrating Patient Services (PRM), Supply Chain (M-SCM), Financials, and Human Capital Management (HCM) with a focus on real-time data visualization.",
+  "requestFramePermissions": []
+}
