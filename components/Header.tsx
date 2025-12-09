@@ -37,8 +37,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, title }) => {
           
           <div className="flex items-center gap-3 border-l border-slate-200 pl-4">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-slate-900">Dr. Admin</p>
-              <p className="text-xs text-slate-500">System Administrator</p>
+              <p className="text-sm font-semibold text-slate-900">Hendra Gunawan</p>
+              <p className="text-xs text-slate-500">Managing Partner</p>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
                <UserCircle size={24} />
