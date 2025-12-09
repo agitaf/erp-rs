@@ -12,10 +12,12 @@ interface ERPContextType {
   addPatient: (patient: Omit<Patient, 'id'>) => void;
   updatePatientStatus: (id: string, status: PatientStatus) => void;
   
+  addInventoryItem: (item: Omit<InventoryItem, 'id'>) => void;
   updateStockLevel: (id: string, change: number) => void;
   
   addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
   
+  addStaff: (staff: Omit<Staff, 'id'>) => void;
   toggleStaffStatus: (id: string) => void;
 }
 
@@ -63,6 +65,14 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setPatients(prev => prev.map(p => p.id === id ? { ...p, status } : p));
   };
 
+  const addInventoryItem = (itemData: Omit<InventoryItem, 'id'>) => {
+    const newItem: InventoryItem = {
+      ...itemData,
+      id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+    };
+    setInventory(prev => [newItem, ...prev]);
+  };
+
   const updateStockLevel = (id: string, change: number) => {
     setInventory(prev => prev.map(item => {
       if (item.id === id) {
@@ -85,6 +95,15 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTransactions(prev => [newTrx, ...prev]);
   };
 
+  const addStaff = (staffData: Omit<Staff, 'id'>) => {
+    const newStaff: Staff = {
+      ...staffData,
+      id: `S-${Math.floor(100 + Math.random() * 900)}`,
+      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(staffData.name)}&background=random`
+    };
+    setStaff(prev => [newStaff, ...prev]);
+  };
+
   const toggleStaffStatus = (id: string) => {
     setStaff(prev => prev.map(s => {
       if (s.id === id) {
@@ -103,8 +122,10 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       transactions,
       addPatient,
       updatePatientStatus,
+      addInventoryItem,
       updateStockLevel,
       addTransaction,
+      addStaff,
       toggleStaffStatus
     }}>
       {children}

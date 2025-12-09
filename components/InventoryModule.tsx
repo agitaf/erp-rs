@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useERP } from '../context/ERPContext';
 import { StockStatus } from '../types';
 import { Package, AlertTriangle, CheckCircle, AlertCircle, ScanBarcode, ShoppingCart, ArrowRight, Plus, Minus } from 'lucide-react';
 import { Card } from './ui/Card';
+import { Modal } from './ui/Modal';
 
 const InventoryModule: React.FC = () => {
-  const { inventory, updateStockLevel } = useERP();
+  const { inventory, updateStockLevel, addInventoryItem } = useERP();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    category: 'Medicine',
+    quantity: '',
+    unit: 'Tabs',
+    minLevel: '',
+    expiryDate: '',
+    supplier: '',
+  });
+
+  const handleAddItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    const qty = parseInt(formData.quantity) || 0;
+    const min = parseInt(formData.minLevel) || 10;
+    
+    let status = StockStatus.IN_STOCK;
+    if (qty === 0) status = StockStatus.OUT_OF_STOCK;
+    else if (qty <= min) status = StockStatus.LOW_STOCK;
+
+    addInventoryItem({
+      name: formData.name,
+      category: formData.category,
+      quantity: qty,
+      unit: formData.unit,
+      minLevel: min,
+      expiryDate: formData.expiryDate,
+      supplier: formData.supplier,
+      status: status
+    });
+
+    setIsModalOpen(false);
+    setFormData({ name: '', category: 'Medicine', quantity: '', unit: 'Tabs', minLevel: '', expiryDate: '', supplier: '' });
+  };
 
   const getStockStatusBadge = (status: StockStatus) => {
     switch (status) {
@@ -54,13 +89,20 @@ const InventoryModule: React.FC = () => {
           <p className="text-slate-500 text-sm mt-1">M-SCM / Inventory & Procurement</p>
         </div>
         <div className="flex gap-3">
+            <button 
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 font-medium"
+            >
+                <Plus size={18} />
+                <span>Add Item</span>
+            </button>
             <button className="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl transition-all shadow-sm font-medium">
                 <ScanBarcode size={18} />
-                <span>Scan Item</span>
+                <span className="hidden sm:inline">Scan</span>
             </button>
             <button className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-slate-900/20 font-medium">
                 <ShoppingCart size={18} />
-                <span>Purchase Order</span>
+                <span className="hidden sm:inline">PO</span>
             </button>
         </div>
       </div>
@@ -156,6 +198,89 @@ const InventoryModule: React.FC = () => {
           </table>
         </div>
       </Card>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Inventory Item">
+          <form onSubmit={handleAddItem} className="space-y-4">
+              <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Item Name</label>
+                  <input 
+                      required
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      placeholder="e.g. Paracetamol 500mg"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Category</label>
+                      <select 
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          value={formData.category}
+                          onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      >
+                          <option value="Medicine">Medicine</option>
+                          <option value="Supplies">Supplies</option>
+                          <option value="Fluids">Fluids</option>
+                          <option value="Equipment">Equipment</option>
+                      </select>
+                  </div>
+                  <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Supplier</label>
+                      <input 
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="e.g. Kimia Farma"
+                          value={formData.supplier}
+                          onChange={(e) => setFormData({...formData, supplier: e.target.value})}
+                      />
+                  </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                   <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Quantity</label>
+                      <input 
+                          type="number"
+                          required
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          value={formData.quantity}
+                          onChange={(e) => setFormData({...formData, quantity: e.target.value})}
+                      />
+                  </div>
+                  <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Unit</label>
+                      <input 
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="e.g. Box"
+                          value={formData.unit}
+                          onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                      />
+                  </div>
+                  <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">Min Level</label>
+                      <input 
+                          type="number"
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          value={formData.minLevel}
+                          onChange={(e) => setFormData({...formData, minLevel: e.target.value})}
+                      />
+                  </div>
+              </div>
+              <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">Expiry Date</label>
+                  <input 
+                      type="date"
+                      required
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      value={formData.expiryDate}
+                      onChange={(e) => setFormData({...formData, expiryDate: e.target.value})}
+                  />
+              </div>
+              <div className="pt-4 flex gap-3">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50">Cancel</button>
+                  <button type="submit" className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-500/20">Add Inventory</button>
+              </div>
+          </form>
+      </Modal>
     </div>
   );
 };
