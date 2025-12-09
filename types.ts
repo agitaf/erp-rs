@@ -1,57 +1,57 @@
 import React from 'react';
 
 // Enums for status tracking
-export enum PatientStatus {
-  ADMITTED = 'In-Patient',
-  DISCHARGED = 'Discharged',
-  OUTPATIENT = 'Out-Patient',
-  EMERGENCY = 'Emergency'
+export enum EngagementStatus {
+  PLANNING = 'Planning',
+  FIELDWORK = 'Fieldwork',
+  REVIEW = 'Review',
+  FINALIZED = 'Finalized'
 }
 
 export enum StaffStatus {
-  ON_DUTY = 'On Duty',
-  OFF_DUTY = 'Off Duty',
-  ON_LEAVE = 'On Leave'
+  ON_SITE = 'Client Site',
+  OFFICE = 'Office',
+  TRAINING = 'Training'
 }
 
-export enum StockStatus {
-  IN_STOCK = 'In Stock',
-  LOW_STOCK = 'Low Stock',
-  OUT_OF_STOCK = 'Out of Stock'
+export enum TaskStatus {
+  NOT_STARTED = 'Not Started',
+  IN_PROGRESS = 'In Progress',
+  COMPLETED = 'Completed',
+  REVIEWED = 'Reviewed'
 }
 
 // Entity Interfaces
-export interface Patient {
+export interface ClientEngagement {
   id: string;
-  name: string;
-  age: number;
-  gender: string;
-  diagnosis: string;
-  admissionDate: string;
-  status: PatientStatus;
-  doctorAssigned: string;
+  clientName: string;
+  industry: string;
+  serviceType: string; // e.g., General Audit, Tax, Advisory
+  fiscalYear: string;
+  status: EngagementStatus;
+  partnerInCharge: string;
+  deadline: string;
 }
 
-export interface InventoryItem {
+export interface AuditTask {
   id: string;
-  name: string;
+  taskName: string; // e.g., Cash & Bank, Revenue Cycle
   category: string;
-  quantity: number;
-  unit: string;
-  minLevel: number;
-  expiryDate: string;
-  status: StockStatus;
-  supplier: string;
+  budgetedHours: number;
+  actualHours: number;
+  assignedTo: string; // Auditor Name
+  status: TaskStatus;
+  dueDate: string;
 }
 
 export interface Staff {
   id: string;
   name: string;
-  role: string;
-  department: string;
+  role: string; // Partner, Manager, Senior, Associate
+  specialization: string; // Banking, Manufacturing, etc.
   email: string;
   status: StaffStatus;
-  shift: string;
+  currentEngagement: string;
   avatarUrl: string;
 }
 
@@ -62,7 +62,7 @@ export interface Transaction {
   amount: number;
   type: 'Income' | 'Expense';
   category: string;
-  status: 'Completed' | 'Pending';
+  status: 'Billed' | 'Unbilled' | 'Paid' | 'Pending';
 }
 
 export interface KPI {

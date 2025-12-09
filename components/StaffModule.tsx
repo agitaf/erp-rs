@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useERP } from '../context/ERPContext';
 import { StaffStatus } from '../types';
 import { Card } from './ui/Card';
-import { Calendar, Clock, MapPin, Plus } from 'lucide-react';
+import { Calendar, Briefcase, MapPin, Plus } from 'lucide-react';
 import { Modal } from './ui/Modal';
 
 const StaffModule: React.FC = () => {
@@ -11,9 +11,9 @@ const StaffModule: React.FC = () => {
   const [formData, setFormData] = useState({
       name: '',
       role: '',
-      department: 'General',
+      specialization: 'General',
       email: '',
-      shift: 'Morning'
+      currentEngagement: ''
   });
 
   const handleAddStaff = (e: React.FormEvent) => {
@@ -23,30 +23,30 @@ const StaffModule: React.FC = () => {
     addStaff({
         name: formData.name,
         role: formData.role,
-        department: formData.department,
+        specialization: formData.specialization,
         email: formData.email,
-        shift: formData.shift,
-        status: StaffStatus.OFF_DUTY,
+        currentEngagement: formData.currentEngagement || 'Unassigned',
+        status: StaffStatus.OFFICE,
         avatarUrl: '' // Handled in context
     });
 
     setIsModalOpen(false);
-    setFormData({ name: '', role: '', department: 'General', email: '', shift: 'Morning' });
+    setFormData({ name: '', role: '', specialization: 'General', email: '', currentEngagement: '' });
   };
 
   return (
     <div className="space-y-6 animate-fade-in">
        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Human Capital (HCM)</h2>
-          <p className="text-slate-500 text-sm">Staff scheduling, performance, and resource allocation.</p>
+          <h2 className="text-2xl font-bold text-slate-900">Auditor Scheduling</h2>
+          <p className="text-slate-500 text-sm">Manage staff assignments, location, and specialization.</p>
         </div>
         <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95"
         >
             <Plus size={18} />
-            <span className="font-semibold">Add Staff</span>
+            <span className="font-semibold">Add Auditor</span>
         </button>
       </div>
 
@@ -60,25 +60,25 @@ const StaffModule: React.FC = () => {
                         className="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-white shadow-sm"
                     />
                     <h3 className="font-bold text-slate-900">{s.name}</h3>
-                    <p className="text-sm text-blue-600 font-medium mb-1">{s.role}</p>
-                    <p className="text-xs text-slate-500">{s.department}</p>
+                    <p className="text-sm text-indigo-600 font-medium mb-1">{s.role}</p>
+                    <p className="text-xs text-slate-500">{s.specialization}</p>
                 </div>
                 <div className="p-4 bg-slate-50/50 space-y-3">
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-500 flex items-center gap-2">
-                            <Clock size={14} /> Shift
+                            <Briefcase size={14} /> Engagement
                         </span>
-                        <span className="font-medium text-slate-700">{s.shift}</span>
+                        <span className="font-medium text-slate-700 text-xs text-right max-w-[50%] truncate">{s.currentEngagement}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-500 flex items-center gap-2">
-                            <MapPin size={14} /> Status
+                            <MapPin size={14} /> Location
                         </span>
                         <button 
                             onClick={() => toggleStaffStatus(s.id)}
                             className={`px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity
-                            ${s.status === StaffStatus.ON_DUTY ? 'bg-green-100 text-green-700' : 
-                              s.status === StaffStatus.OFF_DUTY ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-600'}`}
+                            ${s.status === StaffStatus.OFFICE ? 'bg-slate-200 text-slate-700' : 
+                              s.status === StaffStatus.ON_SITE ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-600'}`}
                             title="Click to toggle status"
                         >
                             {s.status}
@@ -86,8 +86,8 @@ const StaffModule: React.FC = () => {
                     </div>
                 </div>
                 <div className="p-3 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                    <button className="flex-1 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">
-                        Profile
+                    <button className="flex-1 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-md transition-colors">
+                        CV
                     </button>
                     <button className="flex-1 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-md transition-colors">
                         Message
@@ -97,12 +97,12 @@ const StaffModule: React.FC = () => {
         ))}
       </div>
 
-      <Card title="Shift Coverage - Today" className="mt-6">
+      <Card title="Team Availability" className="mt-6">
          <div className="h-48 flex items-center justify-center bg-slate-50 border border-dashed border-slate-300 rounded-lg text-slate-400">
             <div className="text-center">
                 <Calendar size={32} className="mx-auto mb-2 opacity-50" />
-                <p>Interactive Scheduler View</p>
-                <p className="text-xs">(Integration with Google Calendar API)</p>
+                <p>Google Calendar Integration</p>
+                <p className="text-xs">(Shows team availability for field work)</p>
             </div>
          </div>
       </Card>
@@ -113,8 +113,8 @@ const StaffModule: React.FC = () => {
                   <label className="text-sm font-medium text-slate-700">Full Name</label>
                   <input 
                       required
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      placeholder="e.g. Dr. New Doctor"
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="e.g. Andi Saputra"
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
@@ -122,55 +122,42 @@ const StaffModule: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                       <label className="text-sm font-medium text-slate-700">Role</label>
-                      <input 
+                      <select 
                           required
-                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          placeholder="e.g. Surgeon"
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                           value={formData.role}
                           onChange={(e) => setFormData({...formData, role: e.target.value})}
-                      />
+                      >
+                          <option value="">Select Role</option>
+                          <option value="Partner">Partner</option>
+                          <option value="Senior Manager">Senior Manager</option>
+                          <option value="Senior Auditor">Senior Auditor</option>
+                          <option value="Junior Auditor">Junior Auditor</option>
+                      </select>
                   </div>
                   <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-700">Department</label>
-                      <select 
-                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          value={formData.department}
-                          onChange={(e) => setFormData({...formData, department: e.target.value})}
-                      >
-                          <option value="General">General</option>
-                          <option value="Surgery">Surgery</option>
-                          <option value="Pediatrics">Pediatrics</option>
-                          <option value="ICU">ICU</option>
-                          <option value="Pharmacy">Pharmacy</option>
-                      </select>
+                      <label className="text-sm font-medium text-slate-700">Specialization</label>
+                      <input 
+                          className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                          placeholder="e.g. Banking"
+                          value={formData.specialization}
+                          onChange={(e) => setFormData({...formData, specialization: e.target.value})}
+                      />
                   </div>
               </div>
               <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700">Email Address</label>
                   <input 
                       type="email"
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      placeholder="email@medicore.id"
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="email@auditcore.id"
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                   />
               </div>
-              <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Default Shift</label>
-                  <select 
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      value={formData.shift}
-                      onChange={(e) => setFormData({...formData, shift: e.target.value})}
-                  >
-                      <option value="Morning">Morning (07:00 - 15:00)</option>
-                      <option value="Day">Day (09:00 - 17:00)</option>
-                      <option value="Evening">Evening (15:00 - 23:00)</option>
-                      <option value="Night">Night (23:00 - 07:00)</option>
-                  </select>
-              </div>
               <div className="pt-4 flex gap-3">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50">Cancel</button>
-                  <button type="submit" className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-500/20">Register Staff</button>
+                  <button type="submit" className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-lg shadow-indigo-500/20">Register Auditor</button>
               </div>
           </form>
       </Modal>

@@ -1,19 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Patient, InventoryItem, Staff, Transaction, PatientStatus, StockStatus, StaffStatus } from '../types';
-import { MOCK_PATIENTS, MOCK_INVENTORY, MOCK_STAFF, MOCK_TRANSACTIONS } from '../constants';
+import { ClientEngagement, AuditTask, Staff, Transaction, EngagementStatus, TaskStatus, StaffStatus } from '../types';
+import { MOCK_ENGAGEMENTS, MOCK_TASKS, MOCK_STAFF, MOCK_TRANSACTIONS } from '../constants';
 
 interface ERPContextType {
-  patients: Patient[];
-  inventory: InventoryItem[];
+  engagements: ClientEngagement[];
+  tasks: AuditTask[];
   staff: Staff[];
   transactions: Transaction[];
   
   // Actions
-  addPatient: (patient: Omit<Patient, 'id'>) => void;
-  updatePatientStatus: (id: string, status: PatientStatus) => void;
+  addEngagement: (engagement: Omit<ClientEngagement, 'id'>) => void;
+  updateEngagementStatus: (id: string, status: EngagementStatus) => void;
   
-  addInventoryItem: (item: Omit<InventoryItem, 'id'>) => void;
-  updateStockLevel: (id: string, change: number) => void;
+  addTask: (task: Omit<AuditTask, 'id'>) => void;
+  updateTaskProgress: (id: string, actualHours: number) => void;
+  updateTaskStatus: (id: string, status: TaskStatus) => void;
   
   addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
   
@@ -25,14 +26,14 @@ const ERPContext = createContext<ERPContextType | undefined>(undefined);
 
 export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initialize state from LocalStorage or Fallback to Mock Data
-  const [patients, setPatients] = useState<Patient[]>(() => {
-    const saved = localStorage.getItem('erp_patients');
-    return saved ? JSON.parse(saved) : MOCK_PATIENTS;
+  const [engagements, setEngagements] = useState<ClientEngagement[]>(() => {
+    const saved = localStorage.getItem('erp_engagements');
+    return saved ? JSON.parse(saved) : MOCK_ENGAGEMENTS;
   });
 
-  const [inventory, setInventory] = useState<InventoryItem[]>(() => {
-    const saved = localStorage.getItem('erp_inventory');
-    return saved ? JSON.parse(saved) : MOCK_INVENTORY;
+  const [tasks, setTasks] = useState<AuditTask[]>(() => {
+    const saved = localStorage.getItem('erp_tasks');
+    return saved ? JSON.parse(saved) : MOCK_TASKS;
   });
 
   const [staff, setStaff] = useState<Staff[]>(() => {
@@ -46,60 +47,64 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // Persist to LocalStorage whenever state changes
-  useEffect(() => localStorage.setItem('erp_patients', JSON.stringify(patients)), [patients]);
-  useEffect(() => localStorage.setItem('erp_inventory', JSON.stringify(inventory)), [inventory]);
+  useEffect(() => localStorage.setItem('erp_engagements', JSON.stringify(engagements)), [engagements]);
+  useEffect(() => localStorage.setItem('erp_tasks', JSON.stringify(tasks)), [tasks]);
   useEffect(() => localStorage.setItem('erp_staff', JSON.stringify(staff)), [staff]);
   useEffect(() => localStorage.setItem('erp_transactions', JSON.stringify(transactions)), [transactions]);
 
   // --- Actions ---
 
-  const addPatient = (patientData: Omit<Patient, 'id'>) => {
-    const newPatient: Patient = {
-      ...patientData,
-      id: `P-${Math.floor(1000 + Math.random() * 9000)}`, // Generate random ID
+  const addEngagement = (data: Omit<ClientEngagement, 'id'>) => {
+    const newItem: ClientEngagement = {
+      ...data,
+      id: `ENG-${new Date().getFullYear()}-${Math.floor(10 + Math.random() * 90)}`,
     };
-    setPatients(prev => [newPatient, ...prev]);
+    setEngagements(prev => [newItem, ...prev]);
   };
 
-  const updatePatientStatus = (id: string, status: PatientStatus) => {
-    setPatients(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+  const updateEngagementStatus = (id: string, status: EngagementStatus) => {
+    setEngagements(prev => prev.map(p => p.id === id ? { ...p, status } : p));
   };
 
-  const addInventoryItem = (itemData: Omit<InventoryItem, 'id'>) => {
-    const newItem: InventoryItem = {
-      ...itemData,
-      id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+  const addTask = (data: Omit<AuditTask, 'id'>) => {
+    const newItem: AuditTask = {
+      ...data,
+      id: `TSK-${Math.floor(100 + Math.random() * 900)}`,
     };
-    setInventory(prev => [newItem, ...prev]);
+    setTasks(prev => [newItem, ...prev]);
   };
 
-  const updateStockLevel = (id: string, change: number) => {
-    setInventory(prev => prev.map(item => {
+  const updateTaskProgress = (id: string, actualHours: number) => {
+    setTasks(prev => prev.map(item => {
       if (item.id === id) {
-        const newQuantity = Math.max(0, item.quantity + change);
-        let newStatus = StockStatus.IN_STOCK;
-        if (newQuantity === 0) newStatus = StockStatus.OUT_OF_STOCK;
-        else if (newQuantity <= item.minLevel) newStatus = StockStatus.LOW_STOCK;
-        
-        return { ...item, quantity: newQuantity, status: newStatus };
+        return { ...item, actualHours: actualHours };
       }
       return item;
     }));
   };
 
-  const addTransaction = (trxData: Omit<Transaction, 'id'>) => {
+  const updateTaskStatus = (id: string, status: TaskStatus) => {
+    setTasks(prev => prev.map(item => {
+      if (item.id === id) {
+        return { ...item, status: status };
+      }
+      return item;
+    }));
+  };
+
+  const addTransaction = (data: Omit<Transaction, 'id'>) => {
     const newTrx: Transaction = {
-      ...trxData,
-      id: `TRX-${Math.floor(10000 + Math.random() * 90000)}`
+      ...data,
+      id: `INV-${Math.floor(1000 + Math.random() * 9000)}`
     };
     setTransactions(prev => [newTrx, ...prev]);
   };
 
-  const addStaff = (staffData: Omit<Staff, 'id'>) => {
+  const addStaff = (data: Omit<Staff, 'id'>) => {
     const newStaff: Staff = {
-      ...staffData,
+      ...data,
       id: `S-${Math.floor(100 + Math.random() * 900)}`,
-      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(staffData.name)}&background=random`
+      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`
     };
     setStaff(prev => [newStaff, ...prev]);
   };
@@ -107,7 +112,9 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const toggleStaffStatus = (id: string) => {
     setStaff(prev => prev.map(s => {
       if (s.id === id) {
-        const nextStatus = s.status === StaffStatus.ON_DUTY ? StaffStatus.OFF_DUTY : StaffStatus.ON_DUTY;
+        // Cycle status
+        const nextStatus = s.status === StaffStatus.OFFICE ? StaffStatus.ON_SITE : 
+                           s.status === StaffStatus.ON_SITE ? StaffStatus.TRAINING : StaffStatus.OFFICE;
         return { ...s, status: nextStatus };
       }
       return s;
@@ -116,14 +123,15 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <ERPContext.Provider value={{
-      patients,
-      inventory,
+      engagements,
+      tasks,
       staff,
       transactions,
-      addPatient,
-      updatePatientStatus,
-      addInventoryItem,
-      updateStockLevel,
+      addEngagement,
+      updateEngagementStatus,
+      addTask,
+      updateTaskProgress,
+      updateTaskStatus,
       addTransaction,
       addStaff,
       toggleStaffStatus

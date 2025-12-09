@@ -1,50 +1,49 @@
 import React from 'react';
 import { useERP } from '../context/ERPContext';
-import { Users, AlertTriangle, Activity, DollarSign, ArrowUpRight, ArrowDownRight, BedDouble } from 'lucide-react';
+import { Users, FileText, CheckCircle, DollarSign, ArrowUpRight, ArrowDownRight, Briefcase } from 'lucide-react';
 import { Card } from './ui/Card';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CHART_DATA_REVENUE } from '../constants';
-import { PatientStatus, StockStatus, StaffStatus } from '../types';
+import { EngagementStatus, TaskStatus, StaffStatus } from '../types';
 
 const Dashboard: React.FC = () => {
-  const { patients, inventory, transactions, staff } = useERP();
+  const { engagements, tasks, transactions, staff } = useERP();
 
   // Real-time Calculations
-  const activePatients = patients.filter(p => p.status === PatientStatus.ADMITTED || p.status === PatientStatus.EMERGENCY).length;
-  const criticalStock = inventory.filter(i => i.status === StockStatus.LOW_STOCK || i.status === StockStatus.OUT_OF_STOCK).length;
-  const staffOnDuty = staff.filter(s => s.status === StaffStatus.ON_DUTY).length;
+  const activeEngagements = engagements.filter(p => p.status === EngagementStatus.FIELDWORK || p.status === EngagementStatus.PLANNING).length;
+  const pendingTasks = tasks.filter(i => i.status === TaskStatus.IN_PROGRESS || i.status === TaskStatus.NOT_STARTED).length;
+  const staffOnSite = staff.filter(s => s.status === StaffStatus.ON_SITE).length;
   
-  // Calculate daily revenue (simplified for demo)
-  const today = new Date().toISOString().split('T')[0];
-  const dailyRevenue = transactions
-    .filter(t => t.date === today && t.type === 'Income')
+  // Calculate revenue (billed)
+  const billedRevenue = transactions
+    .filter(t => t.type === 'Income')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const stats = [
-    { label: 'Active Patients', value: activePatients.toString(), change: '+12%', trend: 'up', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { label: 'Stock Alerts', value: `${criticalStock} Items`, change: criticalStock > 0 ? 'Action Needed' : 'Good', trend: criticalStock > 0 ? 'down' : 'up', icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { label: 'Daily Revenue', value: `Rp ${(dailyRevenue / 1000000).toFixed(1)}M`, change: '+8%', trend: 'up', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { label: 'Staff On Duty', value: staffOnDuty.toString(), change: 'Stable', trend: 'neutral', icon: Activity, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { label: 'Active Engagements', value: activeEngagements.toString(), change: '+3', trend: 'up', icon: Briefcase, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { label: 'Pending WIP Tasks', value: `${pendingTasks}`, change: pendingTasks > 5 ? 'High Load' : 'Stable', trend: pendingTasks > 5 ? 'up' : 'down', icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { label: 'Billed Revenue', value: `Rp ${(billedRevenue / 1000000).toFixed(0)}M`, change: '+12%', trend: 'up', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { label: 'Auditors On Site', value: staffOnSite.toString(), change: 'Busy Season', trend: 'neutral', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
   ];
 
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Hero Welcome Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-700 to-purple-800 p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-white opacity-10 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-blue-400 opacity-20 blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-40 w-40 rounded-full bg-indigo-400 opacity-20 blur-2xl"></div>
         
         <div className="relative z-10">
-            <h1 className="text-3xl font-bold mb-2">Good Morning, Dr. Admin 👋</h1>
-            <p className="text-blue-100 max-w-2xl text-lg">
-                Hospital operations are running smoothly. You have <span className="font-semibold text-white">{activePatients} active patients</span> and <span className="font-semibold text-white">{criticalStock} supply alerts</span> to review today.
+            <h1 className="text-3xl font-bold mb-2">Welcome, Managing Partner 👋</h1>
+            <p className="text-indigo-100 max-w-2xl text-lg">
+                Your firm is currently managing <span className="font-semibold text-white">{activeEngagements} active engagements</span>. There are <span className="font-semibold text-white">{pendingTasks} audit tasks</span> pending review this week.
             </p>
             <div className="mt-6 flex gap-3">
-                <button className="bg-white text-blue-700 px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-50 transition-colors">
-                    View Schedule
+                <button className="bg-white text-indigo-800 px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-indigo-50 transition-colors">
+                    Review WIP
                 </button>
-                <button className="bg-blue-800/50 backdrop-blur-sm border border-blue-400/30 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800/70 transition-colors">
-                    Generate Reports
+                <button className="bg-indigo-900/50 backdrop-blur-sm border border-indigo-400/30 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-900/70 transition-colors">
+                    Engagement Report
                 </button>
             </div>
         </div>
@@ -72,7 +71,7 @@ const Dashboard: React.FC = () => {
 
       {/* Main Charts Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card title="Revenue Trends" className="lg:col-span-2 min-h-[400px]">
+        <Card title="Billing Trends (Million IDR)" className="lg:col-span-2 min-h-[400px]">
           <div className="h-[320px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
@@ -81,8 +80,8 @@ const Dashboard: React.FC = () => {
               >
                 <defs>
                   <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <XAxis 
@@ -96,7 +95,6 @@ const Dashboard: React.FC = () => {
                     axisLine={false} 
                     tickLine={false} 
                     tick={{fill: '#94a3b8', fontSize: 12}} 
-                    tickFormatter={(value) => `${value/1000}k`}
                 />
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f1f5f9" />
                 <Tooltip 
@@ -107,23 +105,23 @@ const Dashboard: React.FC = () => {
                 <Area 
                     type="monotone" 
                     dataKey="income" 
-                    stroke="#3b82f6" 
+                    stroke="#4f46e5" 
                     strokeWidth={3}
                     fillOpacity={1} 
                     fill="url(#colorIncome)" 
-                    activeDot={{ r: 6, strokeWidth: 0, fill: '#2563eb' }}
+                    activeDot={{ r: 6, strokeWidth: 0, fill: '#4338ca' }}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        <Card title="Ward Status" className="min-h-[400px]">
+        <Card title="Engagement Status" className="min-h-[400px]">
             <div className="flex flex-col h-full">
                 <div className="flex-1 flex flex-col justify-center items-center py-6">
                     <div className="relative w-48 h-48 group">
                         {/* Decorative shadow */}
-                        <div className="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
+                        <div className="absolute inset-0 bg-indigo-100 rounded-full blur-xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
                         
                         <svg className="w-full h-full transform -rotate-90 relative z-10" viewBox="0 0 36 36">
                             <path
@@ -135,8 +133,8 @@ const Dashboard: React.FC = () => {
                                 strokeLinecap="round"
                             />
                             <path
-                                className="text-blue-600 drop-shadow-md"
-                                strokeDasharray={`${Math.min(100, (activePatients/100)*100)}, 100`}
+                                className="text-indigo-600 drop-shadow-md"
+                                strokeDasharray={`${Math.min(100, (activeEngagements/engagements.length)*100)}, 100`}
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                                 fill="none"
                                 stroke="currentColor"
@@ -145,11 +143,11 @@ const Dashboard: React.FC = () => {
                             />
                         </svg>
                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20">
-                            <div className="flex justify-center mb-1 text-blue-600">
-                                <BedDouble size={24} />
+                            <div className="flex justify-center mb-1 text-indigo-600">
+                                <Briefcase size={24} />
                             </div>
-                            <span className="text-4xl font-bold text-slate-900">{Math.round((activePatients/100)*100)}%</span>
-                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-1">Occupied</p>
+                            <span className="text-4xl font-bold text-slate-900">{Math.round((activeEngagements/Math.max(1, engagements.length))*100)}%</span>
+                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-1">Active</p>
                         </div>
                     </div>
                 </div>
@@ -157,20 +155,20 @@ const Dashboard: React.FC = () => {
                 <div className="mt-4 space-y-5 px-2">
                     <div>
                         <div className="flex justify-between text-sm mb-2">
-                            <span className="text-slate-600 font-medium">VIP Rooms</span>
-                            <span className="font-bold text-slate-900">8 <span className="text-slate-400 font-normal">/ 10</span></span>
+                            <span className="text-slate-600 font-medium">Finalizing Phase</span>
+                            <span className="font-bold text-slate-900">2 <span className="text-slate-400 font-normal">/ 5</span></span>
                         </div>
                         <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                            <div className="bg-gradient-to-r from-purple-500 to-indigo-500 h-2.5 rounded-full" style={{ width: '80%' }}></div>
+                            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2.5 rounded-full" style={{ width: '40%' }}></div>
                         </div>
                     </div>
                     <div>
                         <div className="flex justify-between text-sm mb-2">
-                            <span className="text-slate-600 font-medium">General Ward</span>
-                            <span className="font-bold text-slate-900">{activePatients} <span className="text-slate-400 font-normal">/ 100</span></span>
+                            <span className="text-slate-600 font-medium">Fieldwork</span>
+                            <span className="font-bold text-slate-900">{activeEngagements} <span className="text-slate-400 font-normal">/ {engagements.length}</span></span>
                         </div>
                          <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-400 to-cyan-400 h-2.5 rounded-full" style={{ width: `${(activePatients/100)*100}%` }}></div>
+                            <div className="bg-gradient-to-r from-indigo-400 to-violet-400 h-2.5 rounded-full" style={{ width: `${(activeEngagements/engagements.length)*100}%` }}></div>
                         </div>
                     </div>
                 </div>

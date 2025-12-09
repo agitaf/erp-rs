@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
-import PatientModule from './components/PatientModule';
-import InventoryModule from './components/InventoryModule';
+import ClientModule from './components/ClientModule';
+import TaskModule from './components/TaskModule';
 import FinancialModule from './components/FinancialModule';
 import StaffModule from './components/StaffModule';
 import { ERPProvider } from './context/ERPContext';
@@ -16,10 +16,10 @@ const App: React.FC = () => {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
-      case 'patients':
-        return <PatientModule />;
-      case 'inventory':
-        return <InventoryModule />;
+      case 'clients':
+        return <ClientModule />;
+      case 'tasks':
+        return <TaskModule />;
       case 'financial':
         return <FinancialModule />;
       case 'staff':
@@ -31,12 +31,12 @@ const App: React.FC = () => {
 
   const getPageTitle = () => {
     switch(activeTab) {
-        case 'dashboard': return 'Dashboard';
-        case 'patients': return 'Patient Management';
-        case 'inventory': return 'Inventory & Supply Chain';
-        case 'financial': return 'Financials';
-        case 'staff': return 'Human Capital';
-        default: return 'MediCore ERP';
+        case 'dashboard': return 'Executive Dashboard';
+        case 'clients': return 'Client & Engagement Management';
+        case 'tasks': return 'WIP & Audit Tasks';
+        case 'financial': return 'Billing & Financials';
+        case 'staff': return 'Resource Scheduling';
+        default: return 'AuditCore ERP';
     }
   }
 

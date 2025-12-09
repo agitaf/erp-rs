@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Users, Package, CreditCard, Stethoscope, Settings, LogOut, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, CreditCard, UserCheck, LogOut, ShieldCheck } from 'lucide-react';
 import { APP_NAME } from '../constants';
 
 interface SidebarProps {
@@ -11,11 +11,11 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'patients', label: 'Patients (PRM)', icon: Users },
-    { id: 'inventory', label: 'Supply Chain (M-SCM)', icon: Package },
-    { id: 'financial', label: 'Financials', icon: CreditCard },
-    { id: 'staff', label: 'Human Capital (HCM)', icon: Stethoscope },
+    { id: 'dashboard', label: 'Executive Dashboard', icon: LayoutDashboard },
+    { id: 'clients', label: 'Clients & Engagements', icon: Briefcase },
+    { id: 'tasks', label: 'Work In Progress (WIP)', icon: ShieldCheck },
+    { id: 'financial', label: 'Billing & Expenses', icon: CreditCard },
+    { id: 'staff', label: 'Auditor Scheduling', icon: Users },
   ];
 
   return (
@@ -35,17 +35,17 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setI
         md:relative md:translate-x-0 shadow-2xl flex flex-col
       `}>
         {/* Background Gradient Accent */}
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-slate-900 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/20 to-slate-900 pointer-events-none" />
 
         <div className="relative flex flex-col h-full z-10">
           {/* Logo Area */}
           <div className="p-8 pb-6 flex items-center gap-4">
-            <div className="bg-gradient-to-tr from-blue-500 to-cyan-400 p-2.5 rounded-xl shadow-lg shadow-blue-500/20">
-                <Activity size={26} className="text-white" />
+            <div className="bg-gradient-to-tr from-indigo-500 to-violet-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+                <ShieldCheck size={26} className="text-white" />
             </div>
             <div>
                 <h1 className="text-xl font-bold tracking-tight text-white">{APP_NAME}</h1>
-                <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">Enterprise System</p>
+                <p className="text-xs text-slate-400 font-medium tracking-wide uppercase">Audit Firm System</p>
             </div>
           </div>
 
@@ -68,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setI
               >
                 {/* Active State Background Gradient */}
                 {activeTab === item.id && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-100" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-100" />
                 )}
                 
                 <item.icon size={20} className={`relative z-10 transition-transform group-hover:scale-110 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
@@ -85,11 +85,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setI
           <div className="p-4 mx-4 mb-4 rounded-2xl bg-slate-800/50 border border-slate-700/50">
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-md">
-                    DA
+                    HG
                 </div>
                 <div className="overflow-hidden">
-                    <p className="text-sm font-bold text-white truncate">Dr. Admin</p>
-                    <p className="text-xs text-slate-400 truncate">Chief Medical Officer</p>
+                    <p className="text-sm font-bold text-white truncate">Hendra Gunawan</p>
+                    <p className="text-xs text-slate-400 truncate">Managing Partner</p>
                 </div>
             </div>
             <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors border border-red-500/20">

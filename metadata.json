@@ -1,5 +1,5 @@
 {
-  "name": "MediCore ERP",
-  "description": "A comprehensive Hospital ERP system integrating Patient Services (PRM), Supply Chain (M-SCM), Financials, and Human Capital Management (HCM) with a focus on real-time data visualization.",
+  "name": "AuditCore ERP",
+  "description": "A professional service ERP for Audit Firms managing Engagements, Work-in-Progress (WIP), Financials, and Auditor Scheduling.",
   "requestFramePermissions": []
 }

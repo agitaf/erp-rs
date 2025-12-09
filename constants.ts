@@ -1,47 +1,51 @@
-import { Patient, InventoryItem, Staff, Transaction, PatientStatus, StockStatus, StaffStatus } from './types';
+import { ClientEngagement, AuditTask, Staff, Transaction, EngagementStatus, TaskStatus, StaffStatus } from './types';
 
-export const APP_NAME = "MediCore ERP";
+export const APP_NAME = "AuditCore ERP";
 
-// Mock Patients (PRM)
-export const MOCK_PATIENTS: Patient[] = [
-  { id: 'P-1001', name: 'Budi Santoso', age: 45, gender: 'M', diagnosis: 'Hypertension', admissionDate: '2023-10-24', status: PatientStatus.ADMITTED, doctorAssigned: 'Dr. Sarah Lim' },
-  { id: 'P-1002', name: 'Siti Aminah', age: 32, gender: 'F', diagnosis: 'Dengue Fever', admissionDate: '2023-10-25', status: PatientStatus.EMERGENCY, doctorAssigned: 'Dr. John Doe' },
-  { id: 'P-1003', name: 'Rudi Hartono', age: 58, gender: 'M', diagnosis: 'Post-Op Recovery', admissionDate: '2023-10-20', status: PatientStatus.ADMITTED, doctorAssigned: 'Dr. Sarah Lim' },
-  { id: 'P-1004', name: 'Linda Kusuma', age: 28, gender: 'F', diagnosis: 'Migraine', admissionDate: '2023-10-26', status: PatientStatus.OUTPATIENT, doctorAssigned: 'Dr. Emily Chen' },
-  { id: 'P-1005', name: 'Ahmad Dahlan', age: 65, gender: 'M', diagnosis: 'Diabetes T2', admissionDate: '2023-10-22', status: PatientStatus.DISCHARGED, doctorAssigned: 'Dr. John Doe' },
+// Mock Clients (CRM) - Realistically diverse portfolio
+export const MOCK_ENGAGEMENTS: ClientEngagement[] = [
+  { id: 'ENG-2024-001', clientName: 'PT Mega Konstruksi Tbk', industry: 'Construction & Real Estate', serviceType: 'General Audit', fiscalYear: '2023', status: EngagementStatus.FIELDWORK, partnerInCharge: 'Hendra Gunawan, CPA', deadline: '2024-03-31' },
+  { id: 'ENG-2024-002', clientName: 'CV Sumber Makmur Sejahtera', industry: 'Retail & Distribution', serviceType: 'Tax Compliance', fiscalYear: '2023', status: EngagementStatus.PLANNING, partnerInCharge: 'Siti Rahma, CPA', deadline: '2024-04-30' },
+  { id: 'ENG-2024-003', clientName: 'Global Tech Solutions Indonesia', industry: 'Technology', serviceType: 'Internal Control Review', fiscalYear: '2023', status: EngagementStatus.REVIEW, partnerInCharge: 'Hendra Gunawan, CPA', deadline: '2024-02-15' },
+  { id: 'ENG-2024-004', clientName: 'Yayasan Harapan Bangsa', industry: 'Non-Profit', serviceType: 'General Audit', fiscalYear: '2023', status: EngagementStatus.FINALIZED, partnerInCharge: 'Budi Santoso, CPA', deadline: '2024-01-31' },
+  { id: 'ENG-2024-005', clientName: 'PT Bank Finansial Asia', industry: 'Banking', serviceType: 'IT Audit Advisory', fiscalYear: '2023', status: EngagementStatus.FIELDWORK, partnerInCharge: 'Siti Rahma, CPA', deadline: '2024-03-15' },
 ];
 
-// Mock Inventory (M-SCM)
-export const MOCK_INVENTORY: InventoryItem[] = [
-  { id: 'INV-001', name: 'Paracetamol 500mg', category: 'Medicine', quantity: 5000, unit: 'Tabs', minLevel: 1000, expiryDate: '2025-12-01', status: StockStatus.IN_STOCK, supplier: 'Kimia Farma' },
-  { id: 'INV-002', name: 'Amoxicillin 500mg', category: 'Medicine', quantity: 120, unit: 'Tabs', minLevel: 200, expiryDate: '2024-05-15', status: StockStatus.LOW_STOCK, supplier: 'BioFarma' },
-  { id: 'INV-003', name: 'Surgical Mask N95', category: 'Supplies', quantity: 45, unit: 'Box', minLevel: 50, expiryDate: '2026-01-01', status: StockStatus.LOW_STOCK, supplier: '3M Health' },
-  { id: 'INV-004', name: 'Saline Solution 500ml', category: 'Fluids', quantity: 800, unit: 'Bottles', minLevel: 100, expiryDate: '2024-11-20', status: StockStatus.IN_STOCK, supplier: 'Otsuka' },
-  { id: 'INV-005', name: 'Insulin Glargine', category: 'Medicine', quantity: 0, unit: 'Vials', minLevel: 20, expiryDate: '2024-08-10', status: StockStatus.OUT_OF_STOCK, supplier: 'Sanofi' },
+// Mock Tasks/WIP (WIP Management) - Realistic Audit Procedures & Hours
+export const MOCK_TASKS: AuditTask[] = [
+  { id: 'TSK-101', taskName: 'Cash Opname & Bank Confirmation', category: 'Assets', budgetedHours: 32, actualHours: 28, assignedTo: 'Andi Saputra', status: TaskStatus.REVIEWED, dueDate: '2024-02-01' },
+  { id: 'TSK-102', taskName: 'Revenue Cut-off Testing', category: 'Revenue', budgetedHours: 65, actualHours: 45, assignedTo: 'Dewi Lestari', status: TaskStatus.IN_PROGRESS, dueDate: '2024-02-20' },
+  { id: 'TSK-103', taskName: 'Inventory Stock Count (Site A)', category: 'Assets', budgetedHours: 120, actualHours: 128, assignedTo: 'Team Alpha', status: TaskStatus.COMPLETED, dueDate: '2024-01-15' },
+  { id: 'TSK-104', taskName: 'Payroll Test of Controls', category: 'Expenses', budgetedHours: 40, actualHours: 5, assignedTo: 'Rudi Hartono', status: TaskStatus.NOT_STARTED, dueDate: '2024-03-01' },
+  { id: 'TSK-105', taskName: 'CIT (PPh 29) Reconciliation', category: 'Tax', budgetedHours: 55, actualHours: 50, assignedTo: 'Dewi Lestari', status: TaskStatus.IN_PROGRESS, dueDate: '2024-02-28' },
+  { id: 'TSK-106', taskName: 'Fixed Asset Physical Inspection', category: 'Assets', budgetedHours: 48, actualHours: 0, assignedTo: 'Andi Saputra', status: TaskStatus.NOT_STARTED, dueDate: '2024-02-25' },
 ];
 
 // Mock Staff (HCM)
 export const MOCK_STAFF: Staff[] = [
-  { id: 'S-001', name: 'Dr. Sarah Lim', role: 'Chief Surgeon', department: 'Surgery', email: 'sarah.lim@medicore.id', status: StaffStatus.ON_DUTY, shift: 'Morning', avatarUrl: 'https://picsum.photos/100/100?random=1' },
-  { id: 'S-002', name: 'Ns. Bayu Pradana', role: 'Senior Nurse', department: 'ICU', email: 'bayu.p@medicore.id', status: StaffStatus.ON_DUTY, shift: 'Morning', avatarUrl: 'https://picsum.photos/100/100?random=2' },
-  { id: 'S-003', name: 'Dr. Emily Chen', role: 'Pediatrician', department: 'Pediatrics', email: 'emily.c@medicore.id', status: StaffStatus.OFF_DUTY, shift: 'Night', avatarUrl: 'https://picsum.photos/100/100?random=3' },
-  { id: 'S-004', name: 'Dr. John Doe', role: 'General Practitioner', department: 'General', email: 'john.d@medicore.id', status: StaffStatus.ON_LEAVE, shift: 'Day', avatarUrl: 'https://picsum.photos/100/100?random=4' },
+  { id: 'S-001', name: 'Hendra Gunawan, CPA', role: 'Audit Partner', specialization: 'Construction & Mining', email: 'hendra@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Supervising Multiple', avatarUrl: 'https://ui-avatars.com/api/?name=Hendra+Gunawan&background=0D8ABC&color=fff' },
+  { id: 'S-002', name: 'Siti Rahma, CPA', role: 'Audit Manager', specialization: 'Banking & Finserv', email: 'siti@auditcore.id', status: StaffStatus.ON_SITE, currentEngagement: 'PT Bank Finansial Asia', avatarUrl: 'https://ui-avatars.com/api/?name=Siti+Rahma&background=random' },
+  { id: 'S-003', name: 'Andi Saputra', role: 'Senior Auditor', specialization: 'Manufacturing', email: 'andi@auditcore.id', status: StaffStatus.ON_SITE, currentEngagement: 'PT Mega Konstruksi', avatarUrl: 'https://ui-avatars.com/api/?name=Andi+Saputra&background=random' },
+  { id: 'S-004', name: 'Dewi Lestari', role: 'Junior Auditor', specialization: 'Taxation', email: 'dewi@auditcore.id', status: StaffStatus.TRAINING, currentEngagement: 'In-House Training', avatarUrl: 'https://ui-avatars.com/api/?name=Dewi+Lestari&background=random' },
+  { id: 'S-005', name: 'Budi Santoso, CPA', role: 'Quality Control Partner', specialization: 'Compliance', email: 'budi@auditcore.id', status: StaffStatus.OFFICE, currentEngagement: 'Final Review', avatarUrl: 'https://ui-avatars.com/api/?name=Budi+Santoso&background=random' },
 ];
 
-// Mock Financials
+// Mock Financials - Realistic Amounts for Mid-Tier Firm
 export const MOCK_TRANSACTIONS: Transaction[] = [
-  { id: 'TRX-8821', date: '2023-10-26', description: 'In-Patient Billing - P-1005', amount: 12500000, type: 'Income', category: 'Patient Services', status: 'Completed' },
-  { id: 'TRX-8822', date: '2023-10-26', description: 'Vendor Payment - BioFarma', amount: 4500000, type: 'Expense', category: 'Procurement', status: 'Pending' },
-  { id: 'TRX-8823', date: '2023-10-25', description: 'Consultation Fee - P-1004', amount: 350000, type: 'Income', category: 'Out-Patient', status: 'Completed' },
-  { id: 'TRX-8824', date: '2023-10-25', description: 'Electricity Bill Oct', amount: 8500000, type: 'Expense', category: 'Utilities', status: 'Completed' },
+  { id: 'INV-2024-001', date: '2024-01-26', description: 'Audit Fee Term 1 (30%) - PT Mega Konstruksi', amount: 450000000, type: 'Income', category: 'Audit Services', status: 'Paid' },
+  { id: 'EXP-2024-001', date: '2024-01-25', description: 'Flight & Accommodation (Stock Opname - Kalimantan)', amount: 28500000, type: 'Expense', category: 'Travel', status: 'Paid' },
+  { id: 'INV-2024-002', date: '2024-01-24', description: 'Tax Advisory Retainer - CV Sumber Makmur', amount: 35000000, type: 'Income', category: 'Tax Services', status: 'Unbilled' },
+  { id: 'EXP-2024-002', date: '2024-01-20', description: 'Audit Software License (Annual Renewal)', amount: 125000000, type: 'Expense', category: 'IT Overhead', status: 'Pending' },
+  { id: 'INV-2024-003', date: '2024-01-15', description: 'Final Billing - Yayasan Harapan Bangsa', amount: 85000000, type: 'Income', category: 'Audit Services', status: 'Paid' },
 ];
 
+// Chart Data - Reflecting Peak Season (Jan-Apr) Revenue in Millions
 export const CHART_DATA_REVENUE = [
-  { name: 'Mon', income: 4000, expense: 2400 },
-  { name: 'Tue', income: 3000, expense: 1398 },
-  { name: 'Wed', income: 2000, expense: 9800 },
-  { name: 'Thu', income: 2780, expense: 3908 },
-  { name: 'Fri', income: 1890, expense: 4800 },
-  { name: 'Sat', income: 2390, expense: 3800 },
-  { name: 'Sun', income: 3490, expense: 4300 },
+  { name: 'Jan', income: 850, expense: 320 }, // Early billing, high travel cost
+  { name: 'Feb', income: 1200, expense: 450 }, // Peak fieldwork
+  { name: 'Mar', income: 1500, expense: 500 }, // Peak billing & overtime
+  { name: 'Apr', income: 1850, expense: 550 }, // Deadline billing
+  { name: 'May', income: 600, expense: 280 }, // Post-season dip
+  { name: 'Jun', income: 450, expense: 250 }, // Normal operations
+  { name: 'Jul', income: 520, expense: 260 }, // Interim audits start
 ];
