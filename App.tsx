@@ -6,6 +6,7 @@ import PatientModule from './components/PatientModule';
 import InventoryModule from './components/InventoryModule';
 import FinancialModule from './components/FinancialModule';
 import StaffModule from './components/StaffModule';
+import { ERPProvider } from './context/ERPContext';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -40,27 +41,29 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        isOpen={isSidebarOpen}
-        setIsOpen={setIsSidebarOpen}
-      />
-      
-      <main className="flex-1 flex flex-col min-w-0">
-        <Header 
-            toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
-            title={getPageTitle()}
+    <ERPProvider>
+      <div className="flex h-screen bg-slate-50 overflow-hidden">
+        <Sidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          isOpen={isSidebarOpen}
+          setIsOpen={setIsSidebarOpen}
         />
         
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
-          <div className="max-w-7xl mx-auto">
-            {renderContent()}
+        <main className="flex-1 flex flex-col min-w-0">
+          <Header 
+              toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+              title={getPageTitle()}
+          />
+          
+          <div className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+            <div className="max-w-7xl mx-auto">
+              {renderContent()}
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </ERPProvider>
   );
 };
 

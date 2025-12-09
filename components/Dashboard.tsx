@@ -1,15 +1,30 @@
 import React from 'react';
+import { useERP } from '../context/ERPContext';
 import { Users, AlertTriangle, Activity, DollarSign, ArrowUpRight, ArrowDownRight, BedDouble } from 'lucide-react';
 import { Card } from './ui/Card';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { CHART_DATA_REVENUE } from '../constants';
+import { PatientStatus, StockStatus, StaffStatus } from '../types';
 
 const Dashboard: React.FC = () => {
+  const { patients, inventory, transactions, staff } = useERP();
+
+  // Real-time Calculations
+  const activePatients = patients.filter(p => p.status === PatientStatus.ADMITTED || p.status === PatientStatus.EMERGENCY).length;
+  const criticalStock = inventory.filter(i => i.status === StockStatus.LOW_STOCK || i.status === StockStatus.OUT_OF_STOCK).length;
+  const staffOnDuty = staff.filter(s => s.status === StaffStatus.ON_DUTY).length;
+  
+  // Calculate daily revenue (simplified for demo)
+  const today = new Date().toISOString().split('T')[0];
+  const dailyRevenue = transactions
+    .filter(t => t.date === today && t.type === 'Income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
   const stats = [
-    { label: 'Active Patients', value: '142', change: '+12%', trend: 'up', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { label: 'Critical Stock', value: '3 Items', change: '-2', trend: 'down', icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { label: 'Daily Revenue', value: 'Rp 45M', change: '+8%', trend: 'up', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { label: 'Staff On Duty', value: '28', change: 'Stable', trend: 'neutral', icon: Activity, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    { label: 'Active Patients', value: activePatients.toString(), change: '+12%', trend: 'up', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { label: 'Stock Alerts', value: `${criticalStock} Items`, change: criticalStock > 0 ? 'Action Needed' : 'Good', trend: criticalStock > 0 ? 'down' : 'up', icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { label: 'Daily Revenue', value: `Rp ${(dailyRevenue / 1000000).toFixed(1)}M`, change: '+8%', trend: 'up', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { label: 'Staff On Duty', value: staffOnDuty.toString(), change: 'Stable', trend: 'neutral', icon: Activity, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
   ];
 
   return (
@@ -22,7 +37,7 @@ const Dashboard: React.FC = () => {
         <div className="relative z-10">
             <h1 className="text-3xl font-bold mb-2">Good Morning, Dr. Admin 👋</h1>
             <p className="text-blue-100 max-w-2xl text-lg">
-                Hospital operations are running smoothly. You have <span className="font-semibold text-white">4 appointments</span> and <span className="font-semibold text-white">3 urgent alerts</span> to review today.
+                Hospital operations are running smoothly. You have <span className="font-semibold text-white">{activePatients} active patients</span> and <span className="font-semibold text-white">{criticalStock} supply alerts</span> to review today.
             </p>
             <div className="mt-6 flex gap-3">
                 <button className="bg-white text-blue-700 px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-50 transition-colors">
@@ -121,7 +136,7 @@ const Dashboard: React.FC = () => {
                             />
                             <path
                                 className="text-blue-600 drop-shadow-md"
-                                strokeDasharray="75, 100"
+                                strokeDasharray={`${Math.min(100, (activePatients/100)*100)}, 100`}
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                                 fill="none"
                                 stroke="currentColor"
@@ -133,7 +148,7 @@ const Dashboard: React.FC = () => {
                             <div className="flex justify-center mb-1 text-blue-600">
                                 <BedDouble size={24} />
                             </div>
-                            <span className="text-4xl font-bold text-slate-900">75%</span>
+                            <span className="text-4xl font-bold text-slate-900">{Math.round((activePatients/100)*100)}%</span>
                             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-1">Occupied</p>
                         </div>
                     </div>
@@ -152,10 +167,10 @@ const Dashboard: React.FC = () => {
                     <div>
                         <div className="flex justify-between text-sm mb-2">
                             <span className="text-slate-600 font-medium">General Ward</span>
-                            <span className="font-bold text-slate-900">42 <span className="text-slate-400 font-normal">/ 60</span></span>
+                            <span className="font-bold text-slate-900">{activePatients} <span className="text-slate-400 font-normal">/ 100</span></span>
                         </div>
                          <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-400 to-cyan-400 h-2.5 rounded-full" style={{ width: '70%' }}></div>
+                            <div className="bg-gradient-to-r from-blue-400 to-cyan-400 h-2.5 rounded-full" style={{ width: `${(activePatients/100)*100}%` }}></div>
                         </div>
                     </div>
                 </div>

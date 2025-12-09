@@ -1,10 +1,46 @@
-import React from 'react';
-import { MOCK_TRANSACTIONS, CHART_DATA_REVENUE } from '../constants';
+import React, { useState } from 'react';
+import { useERP } from '../context/ERPContext';
+import { CHART_DATA_REVENUE } from '../constants';
 import { Card } from './ui/Card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { DollarSign, TrendingUp, TrendingDown, FileText } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, FileText, Plus } from 'lucide-react';
+import { Modal } from './ui/Modal';
 
 const FinancialModule: React.FC = () => {
+  const { transactions, addTransaction } = useERP();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+      description: '',
+      amount: '',
+      type: 'Income' as 'Income' | 'Expense',
+      category: 'General'
+  });
+
+  const handleAddTransaction = (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!formData.description || !formData.amount) return;
+
+    addTransaction({
+        description: formData.description,
+        amount: parseInt(formData.amount),
+        type: formData.type,
+        category: formData.category,
+        date: new Date().toISOString().split('T')[0],
+        status: 'Completed'
+    });
+
+    setIsModalOpen(false);
+    setFormData({ description: '', amount: '', type: 'Income', category: 'General' });
+  };
+
+  const totalRevenue = transactions
+    .filter(t => t.type === 'Income' && t.status === 'Completed')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'Expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -12,13 +48,16 @@ const FinancialModule: React.FC = () => {
           <h2 className="text-2xl font-bold text-slate-900">Financial & Billing</h2>
           <p className="text-slate-500 text-sm">Revenue monitoring, billing, and accounting integration.</p>
         </div>
-        <button className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
-            Generate Report
+        <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-lg shadow-slate-900/20"
+        >
+            <Plus size={16} /> Record Transaction
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card title="Revenue vs Expenses (Last 7 Days)" className="h-96">
+        <Card title="Revenue vs Expenses (Mock Data)" className="h-96">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                 data={CHART_DATA_REVENUE}
@@ -39,8 +78,9 @@ const FinancialModule: React.FC = () => {
 
         <Card title="Recent Transactions" action={<button className="text-sm text-blue-600 font-medium">View All</button>}>
             <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
-                {MOCK_TRANSACTIONS.map(trx => (
-                    <div key={trx.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-50 hover:bg-slate-50 transition-colors">
+                {transactions.length === 0 && <p className="text-slate-400 text-center py-4">No transactions yet.</p>}
+                {transactions.map(trx => (
+                    <div key={trx.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-50 hover:bg-slate-50 transition-colors animate-fade-in">
                         <div className="flex items-center gap-3">
                             <div className={`p-2 rounded-full ${trx.type === 'Income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                                 {trx.type === 'Income' ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
@@ -67,6 +107,17 @@ const FinancialModule: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
+                <p className="text-sm text-slate-500">Net Cashflow</p>
+                <h3 className={`text-2xl font-bold mt-1 ${(totalRevenue - totalExpense) >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    Rp {(totalRevenue - totalExpense).toLocaleString('id-ID')}
+                </h3>
+            </div>
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                <DollarSign size={24} />
+            </div>
+        </div>
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
                 <p className="text-sm text-slate-500">Unpaid Invoices</p>
                 <h3 className="text-2xl font-bold text-slate-900 mt-1">12</h3>
             </div>
@@ -74,16 +125,59 @@ const FinancialModule: React.FC = () => {
                 <FileText size={24} />
             </div>
         </div>
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-                <p className="text-sm text-slate-500">Insurance Claims</p>
-                <h3 className="text-2xl font-bold text-slate-900 mt-1">Rp 450.2M</h3>
-            </div>
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-lg">
-                <DollarSign size={24} />
-            </div>
-        </div>
       </div>
+
+      {/* Add Transaction Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Record Transaction">
+        <form onSubmit={handleAddTransaction} className="space-y-4">
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Description</label>
+                <input 
+                    required
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="e.g. Patient Consultation Fee"
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                />
+            </div>
+             <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Amount (Rp)</label>
+                    <input 
+                        type="number"
+                        required
+                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        value={formData.amount}
+                        onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Type</label>
+                    <select
+                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        value={formData.type}
+                        onChange={(e) => setFormData({...formData, type: e.target.value as 'Income' | 'Expense'})}
+                    >
+                        <option value="Income">Income (+)</option>
+                        <option value="Expense">Expense (-)</option>
+                    </select>
+                </div>
+             </div>
+             <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700">Category</label>
+                <input 
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="e.g. Utilities, Patient Services"
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                />
+            </div>
+            <div className="pt-4 flex gap-3">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50">Cancel</button>
+                <button type="submit" className="flex-1 px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 shadow-lg">Save Record</button>
+            </div>
+        </form>
+      </Modal>
     </div>
   );
 };

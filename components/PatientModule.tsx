@@ -1,11 +1,42 @@
 import React, { useState } from 'react';
-import { MOCK_PATIENTS } from '../constants';
-import { Patient, PatientStatus } from '../types';
-import { Search, Plus, Filter, MoreHorizontal, FileText, User } from 'lucide-react';
+import { useERP } from '../context/ERPContext';
+import { PatientStatus } from '../types';
+import { Search, Plus, Filter, MoreHorizontal, FileText, User, XCircle } from 'lucide-react';
 import { Card } from './ui/Card';
+import { Modal } from './ui/Modal';
 
 const PatientModule: React.FC = () => {
+  const { patients, addPatient, updatePatientStatus } = useERP();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    age: '',
+    gender: 'M',
+    diagnosis: '',
+    doctorAssigned: 'Dr. Sarah Lim',
+    status: PatientStatus.ADMITTED
+  });
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!formData.name || !formData.diagnosis) return;
+
+    addPatient({
+      name: formData.name,
+      age: parseInt(formData.age) || 0,
+      gender: formData.gender,
+      diagnosis: formData.diagnosis,
+      doctorAssigned: formData.doctorAssigned,
+      status: formData.status,
+      admissionDate: new Date().toISOString().split('T')[0]
+    });
+
+    setIsModalOpen(false);
+    setFormData({ name: '', age: '', gender: 'M', diagnosis: '', doctorAssigned: 'Dr. Sarah Lim', status: PatientStatus.ADMITTED });
+  };
 
   const getStatusColor = (status: PatientStatus) => {
     switch (status) {
@@ -21,7 +52,7 @@ const PatientModule: React.FC = () => {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
-  const filteredPatients = MOCK_PATIENTS.filter(p => 
+  const filteredPatients = patients.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -33,7 +64,10 @@ const PatientModule: React.FC = () => {
           <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Patient Management</h2>
           <p className="text-slate-500 text-sm mt-1">PRM / Admissions & Medical Records</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+        >
           <Plus size={18} />
           <span className="font-semibold">Register Patient</span>
         </button>
@@ -99,17 +133,18 @@ const PatientModule: React.FC = () => {
                     {patient.admissionDate}
                   </td>
                   <td className="p-5">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(patient.status)}`}>
+                    <button 
+                      onClick={() => updatePatientStatus(patient.id, PatientStatus.DISCHARGED)}
+                      title="Click to Discharge"
+                      className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(patient.status)} hover:opacity-80 transition-opacity`}
+                    >
                       {patient.status}
-                    </span>
+                    </button>
                   </td>
                   <td className="p-5 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button className="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors" title="View Details">
                             <FileText size={18} />
-                        </button>
-                        <button className="p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-lg transition-colors">
-                            <MoreHorizontal size={18} />
                         </button>
                     </div>
                   </td>
@@ -119,6 +154,102 @@ const PatientModule: React.FC = () => {
           </table>
         </div>
       </Card>
+
+      {/* Registration Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="New Patient Admission">
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Full Name</label>
+            <input 
+              required
+              className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="e.g. John Doe"
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Age</label>
+              <input 
+                type="number"
+                required
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Years"
+                value={formData.age}
+                onChange={(e) => setFormData({...formData, age: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Gender</label>
+              <select 
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                value={formData.gender}
+                onChange={(e) => setFormData({...formData, gender: e.target.value})}
+              >
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Diagnosis / Complaint</label>
+            <textarea 
+              required
+              className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Primary diagnosis..."
+              rows={2}
+              value={formData.diagnosis}
+              onChange={(e) => setFormData({...formData, diagnosis: e.target.value})}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Assigned Doctor</label>
+              <select 
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                value={formData.doctorAssigned}
+                onChange={(e) => setFormData({...formData, doctorAssigned: e.target.value})}
+              >
+                <option value="Dr. Sarah Lim">Dr. Sarah Lim</option>
+                <option value="Dr. John Doe">Dr. John Doe</option>
+                <option value="Dr. Emily Chen">Dr. Emily Chen</option>
+              </select>
+            </div>
+             <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Admission Type</label>
+              <select 
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                value={formData.status}
+                onChange={(e) => setFormData({...formData, status: e.target.value as PatientStatus})}
+              >
+                <option value={PatientStatus.ADMITTED}>In-Patient (Admitted)</option>
+                <option value={PatientStatus.EMERGENCY}>Emergency</option>
+                <option value={PatientStatus.OUTPATIENT}>Out-Patient</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="pt-4 flex gap-3">
+            <button 
+              type="button" 
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 font-medium"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-lg shadow-blue-500/20"
+            >
+              Confirm Admission
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

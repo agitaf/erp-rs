@@ -1,10 +1,12 @@
 import React from 'react';
-import { MOCK_INVENTORY } from '../constants';
+import { useERP } from '../context/ERPContext';
 import { StockStatus } from '../types';
-import { Package, AlertTriangle, CheckCircle, AlertCircle, ScanBarcode, ShoppingCart, ArrowRight } from 'lucide-react';
+import { Package, AlertTriangle, CheckCircle, AlertCircle, ScanBarcode, ShoppingCart, ArrowRight, Plus, Minus } from 'lucide-react';
 import { Card } from './ui/Card';
 
 const InventoryModule: React.FC = () => {
+  const { inventory, updateStockLevel } = useERP();
+
   const getStockStatusBadge = (status: StockStatus) => {
     switch (status) {
       case StockStatus.IN_STOCK:
@@ -29,11 +31,8 @@ const InventoryModule: React.FC = () => {
   };
 
   const calculateProgress = (current: number, min: number) => {
-     // A simple visual calculation: 
-     // If current < min, it's < 30%. If current > 2*min, it's 100%.
      const maxRef = min * 3;
-     const percent = Math.min(100, Math.max(5, (current / maxRef) * 100));
-     return percent;
+     return Math.min(100, Math.max(5, (current / maxRef) * 100));
   };
 
   const getProgressColor = (status: StockStatus) => {
@@ -44,6 +43,8 @@ const InventoryModule: React.FC = () => {
           default: return 'bg-slate-300';
       }
   }
+
+  const alertCount = inventory.filter(i => i.status !== StockStatus.IN_STOCK).length;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -67,8 +68,8 @@ const InventoryModule: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gradient-to-br from-rose-50 to-white border border-rose-100 p-6 rounded-2xl shadow-sm flex items-center justify-between group">
             <div className="space-y-1">
-                <p className="text-sm text-rose-600 font-bold uppercase tracking-wider">Alerts</p>
-                <p className="text-3xl font-bold text-slate-900">3 <span className="text-lg text-slate-400 font-normal">Items</span></p>
+                <p className="text-sm text-rose-600 font-bold uppercase tracking-wider">Stock Alerts</p>
+                <p className="text-3xl font-bold text-slate-900">{alertCount} <span className="text-lg text-slate-400 font-normal">Items</span></p>
             </div>
             <div className="p-4 bg-white rounded-xl text-rose-500 shadow-sm group-hover:scale-110 transition-transform">
                 <AlertCircle size={28} />
@@ -77,7 +78,7 @@ const InventoryModule: React.FC = () => {
         <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-100 p-6 rounded-2xl shadow-sm flex items-center justify-between group">
             <div className="space-y-1">
                 <p className="text-sm text-blue-600 font-bold uppercase tracking-wider">Total SKUs</p>
-                <p className="text-3xl font-bold text-slate-900">1,240</p>
+                <p className="text-3xl font-bold text-slate-900">{inventory.length}</p>
             </div>
             <div className="p-4 bg-white rounded-xl text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
                 <Package size={28} />
@@ -85,8 +86,8 @@ const InventoryModule: React.FC = () => {
         </div>
         <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 p-6 rounded-2xl shadow-sm flex items-center justify-between group">
             <div className="space-y-1">
-                <p className="text-sm text-emerald-600 font-bold uppercase tracking-wider">Inbound</p>
-                <p className="text-3xl font-bold text-slate-900">5 <span className="text-lg text-slate-400 font-normal">Orders</span></p>
+                <p className="text-sm text-emerald-600 font-bold uppercase tracking-wider">Total Value</p>
+                <p className="text-3xl font-bold text-slate-900">Rp 1.2M</p>
             </div>
             <div className="p-4 bg-white rounded-xl text-emerald-500 shadow-sm group-hover:scale-110 transition-transform">
                 <ArrowRight size={28} />
@@ -102,17 +103,16 @@ const InventoryModule: React.FC = () => {
                 <th className="p-5 font-semibold">Item Details</th>
                 <th className="p-5 font-semibold">Category</th>
                 <th className="p-5 font-semibold w-1/4">Stock Level</th>
-                <th className="p-5 font-semibold">Expiry</th>
-                <th className="p-5 font-semibold">Supplier</th>
+                <th className="p-5 font-semibold">Adjust</th>
                 <th className="p-5 font-semibold">Status</th>
               </tr>
             </thead>
             <tbody>
-              {MOCK_INVENTORY.map((item) => (
+              {inventory.map((item) => (
                 <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors">
                   <td className="p-5">
                     <div className="font-semibold text-slate-900">{item.name}</div>
-                    <div className="font-mono text-xs text-slate-400 mt-0.5">{item.id}</div>
+                    <div className="font-mono text-xs text-slate-400 mt-0.5">{item.id} • {item.supplier}</div>
                   </td>
                   <td className="p-5">
                       <span className="px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
@@ -131,8 +131,22 @@ const InventoryModule: React.FC = () => {
                         ></div>
                     </div>
                   </td>
-                  <td className="p-5 text-slate-600 text-sm">{item.expiryDate}</td>
-                  <td className="p-5 text-slate-600 text-sm">{item.supplier}</td>
+                  <td className="p-5">
+                    <div className="flex items-center gap-1">
+                        <button 
+                            onClick={() => updateStockLevel(item.id, -1)}
+                            className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"
+                        >
+                            <Minus size={16} />
+                        </button>
+                        <button 
+                             onClick={() => updateStockLevel(item.id, 1)}
+                            className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-600 transition-colors"
+                        >
+                            <Plus size={16} />
+                        </button>
+                    </div>
+                  </td>
                   <td className="p-5">
                     {getStockStatusBadge(item.status)}
                   </td>

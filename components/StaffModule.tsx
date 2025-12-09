@@ -1,12 +1,14 @@
 import React from 'react';
-import { MOCK_STAFF } from '../constants';
+import { useERP } from '../context/ERPContext';
 import { StaffStatus } from '../types';
 import { Card } from './ui/Card';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 
 const StaffModule: React.FC = () => {
+  const { staff, toggleStaffStatus } = useERP();
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Human Capital (HCM)</h2>
@@ -18,39 +20,43 @@ const StaffModule: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {MOCK_STAFF.map((staff) => (
-            <div key={staff.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                <div className="p-6 text-center border-b border-slate-50">
+        {staff.map((s) => (
+            <div key={s.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
+                <div className="p-6 text-center border-b border-slate-50 relative">
                     <img 
-                        src={staff.avatarUrl} 
-                        alt={staff.name} 
+                        src={s.avatarUrl} 
+                        alt={s.name} 
                         className="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-white shadow-sm"
                     />
-                    <h3 className="font-bold text-slate-900">{staff.name}</h3>
-                    <p className="text-sm text-blue-600 font-medium mb-1">{staff.role}</p>
-                    <p className="text-xs text-slate-500">{staff.department}</p>
+                    <h3 className="font-bold text-slate-900">{s.name}</h3>
+                    <p className="text-sm text-blue-600 font-medium mb-1">{s.role}</p>
+                    <p className="text-xs text-slate-500">{s.department}</p>
                 </div>
                 <div className="p-4 bg-slate-50/50 space-y-3">
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-500 flex items-center gap-2">
                             <Clock size={14} /> Shift
                         </span>
-                        <span className="font-medium text-slate-700">{staff.shift}</span>
+                        <span className="font-medium text-slate-700">{s.shift}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-500 flex items-center gap-2">
                             <MapPin size={14} /> Status
                         </span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium 
-                            ${staff.status === StaffStatus.ON_DUTY ? 'bg-green-100 text-green-700' : 
-                              staff.status === StaffStatus.OFF_DUTY ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-600'}`}>
-                            {staff.status}
-                        </span>
+                        <button 
+                            onClick={() => toggleStaffStatus(s.id)}
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity
+                            ${s.status === StaffStatus.ON_DUTY ? 'bg-green-100 text-green-700' : 
+                              s.status === StaffStatus.OFF_DUTY ? 'bg-slate-100 text-slate-600' : 'bg-amber-100 text-amber-600'}`}
+                            title="Click to toggle status"
+                        >
+                            {s.status}
+                        </button>
                     </div>
                 </div>
-                <div className="p-3 flex gap-2">
+                <div className="p-3 flex gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                     <button className="flex-1 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">
-                        View Profile
+                        Profile
                     </button>
                     <button className="flex-1 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-md transition-colors">
                         Message
